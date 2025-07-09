@@ -119,6 +119,7 @@ class OligoSequenceGenerator:
         length_interval_sequences: tuple,
         split_region: int = 1,
         region_ids: Union[str, List[str]] = None,
+        overwrite: bool = True,
         n_jobs: int = 1,
     ) -> list:
         """
@@ -135,6 +136,8 @@ class OligoSequenceGenerator:
         :type split_region: int
         :param region_ids: List of region IDs to process. If None, all regions in the OligoDatabase are processed, defaults to None.
         :type region_ids: Union[str, List[str]], optional
+        :param overwrite: If True, overwrites existing files with the same name. Default is True.
+        :type overwrite: bool
         :param n_jobs: Number of parallel jobs to run. Default is 1.
         :type n_jobs: int
         :return: A sorted list of paths to the output FASTA files containing the generated sequences.
@@ -257,11 +260,12 @@ class OligoSequenceGenerator:
             # make keys unique
             region_ids = list(set(region_ids))
 
-        # delete previous content
-        for region_id in region_ids:
-            file_fasta_region = os.path.join(self.dir_output, f"{region_id}.fna")
-            if os.path.isfile(file_fasta_region):
-                os.remove(file_fasta_region)
+        if overwrite:
+            # delete previous content
+            for region_id in region_ids:
+                file_fasta_region = os.path.join(self.dir_output, f"{region_id}.fna")
+                if os.path.isfile(file_fasta_region):
+                    os.remove(file_fasta_region)
 
         # create oligos and store all oligos of one region in seperate files
         file_fasta_out = set()
