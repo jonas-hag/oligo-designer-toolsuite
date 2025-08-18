@@ -6,7 +6,7 @@ import os
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Tuple, get_args
+from typing import List, Tuple, get_args, Union
 
 import pandas as pd
 from joblib import Parallel, delayed
@@ -381,6 +381,7 @@ class SpecificityFilterAlignment(SpecificityFilterReference):
         file_reference: str,
         consider_hits_from_input_region: bool,
         mode: int,
+        sequence_type: Union[_TYPES_SEQ, None] = None,
     ) -> pd.DataFrame:
         """
         Executes the filtering process for a specific region by running the search and identifying significant hits.
@@ -395,9 +396,15 @@ class SpecificityFilterAlignment(SpecificityFilterReference):
         :type consider_hits_from_input_region: bool
         :param mode: Operation mode — 0: flag hits, 1: remove hits, 2: return hits table.
         :type mode: int
+        :param sequence_type: The type of sequence to be used for filter calculations, defaults to None.
+            Only set here if `_run_filter` is called directly, otherwise it is set in the calling functions.
+        :type sequence_type: Union[_TYPES_SEQ["oligo", "target"], None], optional
         :return: DataFrame of hit results for the region if mode is 2, otherwise None.
         :rtype: pd.DataFrame
         """
+        if sequence_type is not None:
+            self.sequence_type = sequence_type
+
         search_results = self._run_search(
             oligo_database=oligo_database,
             file_reference=file_reference,
@@ -485,6 +492,7 @@ class SpecificityFilterAlignment(SpecificityFilterReference):
         oligo_database: OligoDatabase,
         table_hits: pd.DataFrame,
         region_id: str,
+        sequence_type: Union[_TYPES_SEQ, None] = None,
     ) -> List[str]:
         """
         Retrieves the query sequences from the OligoDatabase based on the hit information.
@@ -495,9 +503,15 @@ class SpecificityFilterAlignment(SpecificityFilterReference):
         :type table_hits: pd.DataFrame
         :param region_id: Region ID to process.
         :type region_id: str
+        :param sequence_type: The type of sequence to be used for filter calculations, defaults to None.
+            Only set here if `_run_filter` is called directly, otherwise it is set in the calling functions.
+        :type sequence_type: Union[_TYPES_SEQ["oligo", "target"], None], optional
         :return: A list of query sequences corresponding to the hits.
         :rtype: List[str]
         """
+        if sequence_type is not None:
+            self.sequence_type = sequence_type
+            
         queries = [
             oligo_database.database[region_id][query_id][self.sequence_type]
             for query_id in table_hits["query"]
