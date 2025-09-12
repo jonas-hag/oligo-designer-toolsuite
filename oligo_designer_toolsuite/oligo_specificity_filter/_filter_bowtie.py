@@ -151,9 +151,14 @@ class BowtieFilter(SpecificityFilterAlignment):
             + " -x "
             + file_reference
             + " -f"  # fasta file is input
-            # return all alignments only if the number of alignments is not specified
-            + " -a" if "k" not in self.search_parameters.keys() else ""
-            + cmd_parameters
+        )
+
+        # return all alignments only if the number of alignments is not specified
+        if "-k" not in self.search_parameters.keys():
+            cmd += " -a"
+        
+        cmd += (
+            cmd_parameters
             + " "
             + file_oligo_database
             + " "
@@ -422,9 +427,14 @@ class Bowtie2Filter(SpecificityFilterAlignment):
             + " -x "
             + file_reference
             + " -f"  # fast file is input
-            # return all alignments only if the number of alignments is not specified
-            + " -a" if "k" not in self.search_parameters.keys() else ""
-            + cmd_parameters
+        )
+            
+        # return all alignments only if the number of alignments is not specified
+        if "-k" not in self.search_parameters.keys():
+            cmd += " -a"
+
+        cmd += (
+            cmd_parameters
             + " -U "
             + file_oligo_database
             + " -S "
