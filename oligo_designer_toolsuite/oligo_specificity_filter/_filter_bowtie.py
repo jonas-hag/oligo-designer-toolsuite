@@ -151,7 +151,8 @@ class BowtieFilter(SpecificityFilterAlignment):
             + " -x "
             + file_reference
             + " -f"  # fasta file is input
-            + " -a"  # report all alignments -> TODO: does this make sense or set e.g. -k 100
+            # return all alignments only if the number of alignments is not specified
+            + " -a" if "k" not in self.search_parameters.keys() else ""
             + cmd_parameters
             + " "
             + file_oligo_database
@@ -421,7 +422,8 @@ class Bowtie2Filter(SpecificityFilterAlignment):
             + " -x "
             + file_reference
             + " -f"  # fast file is input
-            + " -a"  # report all alignments -> TODO: does this make sense or set e.g. -k 100
+            # return all alignments only if the number of alignments is not specified
+            + " -a" if "k" not in self.search_parameters.keys() else ""
             + cmd_parameters
             + " -U "
             + file_oligo_database
