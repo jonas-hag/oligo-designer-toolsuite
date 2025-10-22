@@ -463,7 +463,7 @@ class FastaParser:
             for file_in in files_in:
                 seq_record = SeqIO.index(file_in, "fasta")
                 for idx in seq_record:
-                    SeqIO.write(seq_record[idx], handle_fasta, "fasta")
+                    SeqIO.write(seq_record[idx], handle_fasta, "fasta-2line")
 
 
 ############################################
